@@ -1,45 +1,16 @@
-aiohttp==3.9.5
-aiosignal==1.3.1
-async-timeout==4.0.3
-attrs==23.2.0
-blinker==1.4
-command-not-found==0.3
-cryptography==3.4.8
-dbus-python==1.2.18
-discord.py==2.3.2
+aiohttp @ file:///home/conda/feedstock_root/build_artifacts/aiohttp_1713964820544/work
+aiosignal @ file:///home/conda/feedstock_root/build_artifacts/aiosignal_1667935791922/work
+attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1704011227531/work
+discord.py @ file:///home/conda/feedstock_root/build_artifacts/discord.py_1691711949357/work
 distlib==0.3.8
-distro==1.7.0
-distro-info==1.1+ubuntu0.2
 filelock==3.14.0
-frozenlist==1.4.1
-gyp==0.1
-httplib2==0.20.2
-idna==3.7
-importlib-metadata==4.6.4
-jeepney==0.7.1
-keyring==23.5.0
-launchpadlib==1.10.16
-lazr.restfulclient==0.14.4
-lazr.uri==1.0.6
-more-itertools==8.10.0
-multidict==6.0.5
-netifaces==0.11.0
-oauthlib==3.2.0
+frozenlist @ file:///home/conda/feedstock_root/build_artifacts/frozenlist_1702645449276/work
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1713279365350/work
+multidict @ file:///home/conda/feedstock_root/build_artifacts/multidict_1707040729125/work
 platformdirs==4.2.2
-PyGObject==3.42.1
-PyJWT==2.3.0
-pyparsing==2.4.7
-python-apt==2.4.0+ubuntu3
-python-dotenv==1.0.1
-PyYAML==5.4.1
-SecretStorage==3.3.1
-six==1.16.0
-systemd-python==234
-ubuntu-pro-client==8001
-ufw==0.36.1
-unattended-upgrades==0.1
-Unidecode==1.3.8
+python-dotenv @ file:///home/conda/feedstock_root/build_artifacts/python-dotenv-split_1706018097647/work
+setuptools==70.0.0
+Unidecode @ file:///home/conda/feedstock_root/build_artifacts/unidecode_1704986336983/work
 virtualenv==20.26.2
-wadllib==1.3.6
-yarl==1.9.4
-zipp==1.0.0
+wheel==0.43.0
+yarl @ file:///home/conda/feedstock_root/build_artifacts/yarl_1705508298164/work
