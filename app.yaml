@@ -8,13 +8,10 @@ runtime_config:
 
 entrypoint: python3 main.py
 
-resources:
-  cpu: 1
-  memory_gb: 0.5
-  disk_size_gb: 10
-
 instance_class: F1
 
 automatic_scaling:
   min_instances: 1
   max_instances: 1
+  cool_down_period_sec: 300
+  target_cpu_utilization: 0.3
