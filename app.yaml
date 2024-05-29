@@ -13,5 +13,3 @@ instance_class: F1
 automatic_scaling:
   min_instances: 1
   max_instances: 1
-  cool_down_period_sec: 300
-  target_cpu_utilization: 0.3
