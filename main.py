@@ -20,6 +20,10 @@ def load_effect():
     with open('negative_effect.json', 'r') as f:
         return json.load(f)
 
+def load_effect2():
+    with open('positive_effect.json', 'r') as f:
+        return json.load(f)
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has been activated !')
@@ -31,10 +35,19 @@ async def pong(ctx):
     
 @bot.command()
 async def debuff(ctx, *, type_name):
-    efect_info = load_effect()
+    effect_info = load_effect()
     normalized_name = unidecode(type_name.lower())
-    if normalized_name in efect_info:
-        await ctx.reply(efect_info[normalized_name.lower()])
+    if normalized_name in effect_info:
+        await ctx.reply(effect_info[normalized_name.lower()])
+    else:
+        await ctx.reply(f'Efeito desconhecido: {type_name}')
+
+@bot.command()
+async def buff(ctx, *, type_name):
+    effect_info = load_effect2()
+    normalized_name = unidecode(type_name.lower())
+    if normalized_name in effect_info:
+        await ctx.reply(effect_info[normalized_name.lower()])
     else:
         await ctx.reply(f'Efeito desconhecido: {type_name}')
         
