@@ -18,7 +18,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 def load_effect():
     with open('negative_effect.json', 'r') as f:
-        return json.load(l)
+        return json.load(f)
 
 @bot.event
 async def on_ready():
