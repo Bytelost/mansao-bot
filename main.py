@@ -32,7 +32,8 @@ async def on_ready():
 @bot.command(name='ping')
 async def pong(ctx):
     await ctx.reply('pong!')
-    
+
+# Negative effects
 @bot.command()
 async def debuff(ctx, *, type_name):
     effect_info = load_effect()
@@ -42,6 +43,7 @@ async def debuff(ctx, *, type_name):
     else:
         await ctx.reply(f'Efeito desconhecido: {type_name}')
 
+# Positive Effects
 @bot.command()
 async def buff(ctx, *, type_name):
     effect_info = load_effect2()
