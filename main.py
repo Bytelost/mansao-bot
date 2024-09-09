@@ -99,13 +99,23 @@ def game_emb(game_id, players):
     # Fill the embed
     for player, stats in players.items():
         
-        # See if is an player or enemy
+        # For breathing user
         if(stats['enemy'] == 0):
             embed.add_field(
                 name=player,
-                value=f"Vida: {stats['life']}, Folêgo/Eter: {stats['stamina']}",
+                value=f"Vida: {stats['life']}, Folêgo: {stats['stamina']}",
                 inline=False
             )
+        
+        # For oni eaters
+        elif(stats['enemy'] == 1):
+            embed.add_field(
+                name=player,
+                value=f"Vida: {stats['life']}, Eter: {stats['stamina']}",
+                inline=False
+            )
+
+        # For enemys
         else:
             embed.add_field(
                 name=player,
@@ -138,14 +148,9 @@ async def game_start(interaction: Interaction, mesa: str = SlashOption(descripti
     # Create the embed with all players' stats
     embed = game_emb(mesa, games[mesa]["players"])
     
-     # Send the embed message and store its reference
-    if games[mesa]["message"] is None:
-        message = await interaction.response.send_message(embed=embed)
-        games[mesa]["message"] = message
-    else:
-        # Update the existing embed if the game was already started
-        await games[mesa]["message"].edit(embed=embed)
-        await interaction.response.send_message(f"Game {mesa} updated with players!", ephemeral=True)
+    # Send the embed message and store its reference
+    message = await interaction.response.send_message(embed=embed)
+    games[mesa]["message"] = message
 
 # End the game
 @bot.slash_command(name="end_game", description="Deleta a iniciativa da mesa")
