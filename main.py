@@ -1,6 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction
+from nextcord import SlashOption
 from dotenv import load_dotenv
 from unidecode import unidecode
 import json
@@ -25,12 +26,12 @@ async def on_ready():
     print(f'{bot.user} has been activated !')
     
 # Test bot
-@bot.slash_command(name="ping", description="Replies with pong!")
+@bot.slash_command(name="ping", description="Responde com um pong!")
 async def ping(interaction: Interaction):
     await interaction.response.send_message("Pong!")
 
 # Negative effects
-@bot.slash_command(name="debuff", description="Replies with the description of a negative effect.")
+@bot.slash_command(name="debuff", description="Responde com a descrição de um efeito negativo.")
 async def debuff(interaction: Interaction, efeito: str):
     
     # Load the negative effects
@@ -44,7 +45,7 @@ async def debuff(interaction: Interaction, efeito: str):
         await interaction.response.send_message(f'Efeito desconhecido: {efeito}')
 
 # Positive Effects
-@bot.slash_command(name="buff", description="Replies with the description of a positive effect.")   
+@bot.slash_command(name="buff", description="Responde com a descrição de um efeito positivo.")   
 async def buff(interaction: Interaction, efeito: str):
     
     # Load the positive effects
@@ -82,7 +83,129 @@ async def resp(interaction: Interaction, respiracao: str, tecnica: int):
     else:
         await interaction.response.send_message(f'Respiração desconhecida: {respiracao}')
     
+# Dictionary to hold the on going games
+games = {}
 
+# Function to help create game embs
+def game_emb(game_id, players):
     
+    # Instantiate the embed
+    embed = nextcord.Embed(
+        title=f"{game_id} - Iniciativa",
+        description="Status dos personagens",
+        color=nextcord.Color.blue()
+    )
+    
+    # Fill the embed
+    for player, stats in players.items():
+        
+        # See if is an player or enemy
+        if(stats['enemy'] == 0):
+            embed.add_field(
+                name=player,
+                value=f"Vida: {stats['life']}, Folêgo/Eter: {stats['stamina']}",
+                inline=False
+            )
+        else:
+            embed.add_field(
+                name=player,
+                value=f"",
+                inline=False
+            )
+    
+    return embed
+
+# Initiave order command
+@bot.slash_command(name="game_start", description="Inicia a iniciativa da mesa")
+async def game_start(interaction: Interaction, mesa: str = SlashOption(description="Nome da mesa"), jogadores: str = SlashOption(description="Lista dos jogadores")): # Players in format: 'Name1 Life Stamina, Name2 Life Stamina
+    
+    global games
+    
+    # Initialize game data if it doesn't exist
+    if mesa not in games:
+        games[mesa] = {"players": {}, "message": None}
+
+    # Parse players input string and add to the game
+    players_list = jogadores.split(", ")
+    for player_data in players_list:
+        try:
+            player_name, life, stamina, enemy = player_data.split()
+            games[mesa]["players"][player_name] = {"life": int(life), "stamina": int(stamina), "enemy": int(enemy)}
+        except ValueError:
+            await interaction.response.send_message(f"Formato errado: {player_data}", ephemeral=True)
+            return
+
+    # Create the embed with all players' stats
+    embed = game_emb(mesa, games[mesa]["players"])
+    
+     # Send the embed message and store its reference
+    if games[mesa]["message"] is None:
+        message = await interaction.response.send_message(embed=embed)
+        games[mesa]["message"] = message
+    else:
+        # Update the existing embed if the game was already started
+        await games[mesa]["message"].edit(embed=embed)
+        await interaction.response.send_message(f"Game {mesa} updated with players!", ephemeral=True)
+
+# End the game
+@bot.slash_command(name="end_game", description="Deleta a iniciativa da mesa")
+async def end_game(interaction: Interaction, mesa: str = SlashOption(description="Nome da mesa")):
+    global games
+
+    # Check if the game exists
+    if mesa in games:
+        # Delete the embed message
+        if games[mesa]["message"]:
+            await games[mesa]["message"].delete()
+
+        # Remove the game from the dictionary
+        del games[mesa]
+
+        await interaction.response.send_message(f"A iniciativa da mesa {mesa} foi deletada", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"Nenhma mesa encontrada com o nome{mesa}!", ephemeral=True)
+
+# Update the game
+@bot.slash_command(name="update_player", description="Updates the life and stamina of a player in a game")
+async def update_player(interaction: Interaction, mesa: str = SlashOption(description="Nome da mesa"), jogador: str = SlashOption(description="Nome do jogador"), vida: int = SlashOption(description="Vida do Jogador"), stamina: int = SlashOption(description="Folêgo/Eter do jogador")):
+    global games
+
+    # Check if the game exists
+    if mesa in games:
+        if jogador in games[mesa]["players"]:
+            # Update player's stats
+            games[mesa]["players"][jogador] = {"life": vida, "stamina": stamina}
+
+            # Update the embed
+            embed = game_emb(mesa, games[mesa]["players"])
+            await games[mesa]["message"].edit(embed=embed)
+
+            await interaction.response.send_message(f"O status do jogador {jogador} foi atualizado", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"O jogador {jogador} não foi encontrado!", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"A mesa {mesa} não foi encontrada", ephemeral=True)
+
+# Show game initiative
+@bot.slash_command(name="show_game", description="Mostra o embed do jogo criado")
+async def show_game(interaction: Interaction, mesa: str = SlashOption(description="Nome da mesa")):
+    
+    global games
+    
+    # Check if the game exists
+    if mesa not in games:
+        await interaction.response.send_message(f"Jogo {mesa} não existe.", ephemeral=True)
+        return
+    
+    # Check if the game has a message already
+    if games[mesa]["message"] is None:
+        await interaction.response.send_message(f"Embed para o jogo {mesa} ainda não foi criado.", ephemeral=True)
+    else:
+        # Fetch and send the existing embed
+        embed = game_emb(mesa, games[mesa]["players"])
+        await interaction.response.send_message(embed=embed)
+        
+
+
 # Run the bot
 bot.run(TOKEN)
