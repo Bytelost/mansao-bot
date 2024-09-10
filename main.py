@@ -60,7 +60,7 @@ async def buff(interaction: Interaction, efeito: str):
 
 # Resp
 @bot.slash_command(name="resp", description="Replies with the description of a breathing technique.")
-async def resp(interaction: Interaction, respiracao: str, tecnica: int):
+async def resp(interaction: Interaction, respiracao: str = SlashOption(description="Nome da respiração"), tecnica: str = SlashOption(description="Forma da respiração")):
     
     # Load the breathing techniques
     resp_info = load_effect("resp.json")
@@ -98,30 +98,11 @@ def game_emb(game_id, players):
     
     # Fill the embed
     for player, stats in players.items():
-        
-        # For breathing user
-        if(stats['enemy'] == 0):
-            embed.add_field(
-                name=player,
-                value=f"Vida: {stats['life']}, Folêgo: {stats['stamina']}",
-                inline=False
-            )
-        
-        # For oni eaters
-        elif(stats['enemy'] == 1):
-            embed.add_field(
-                name=player,
-                value=f"Vida: {stats['life']}, Eter: {stats['stamina']}",
-                inline=False
-            )
-
-        # For enemys
-        else:
-            embed.add_field(
-                name=player,
-                value=f"",
-                inline=False
-            )
+        embed.add_field(
+            name=player,
+            value=f"Vida: {stats['life']}, Eter: {stats['stamina']}",
+            inline=False
+        )
     
     return embed
 
@@ -139,8 +120,8 @@ async def game_start(interaction: Interaction, mesa: str = SlashOption(descripti
     players_list = jogadores.split(", ")
     for player_data in players_list:
         try:
-            player_name, life, stamina, enemy = player_data.split()
-            games[mesa]["players"][player_name] = {"life": int(life), "stamina": int(stamina), "enemy": int(enemy)}
+            player_name, life, stamina = player_data.split()
+            games[mesa]["players"][player_name] = {"life": int(life), "stamina": int(stamina)}
         except ValueError:
             await interaction.response.send_message(f"Formato errado: {player_data}", ephemeral=True)
             return
