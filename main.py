@@ -58,7 +58,7 @@ async def buff(interaction: Interaction, efeito: str):
     else:
         await interaction.response.send_message(f'Efeito desconhecido: {efeito}')
 
-# Resp
+# Breathing styles information
 @bot.slash_command(name="resp", description="Replies with the description of a breathing technique.")
 async def resp(interaction: Interaction, respiracao: str = SlashOption(description="Nome da respiração"), tecnica: str = SlashOption(description="Forma da respiração")):
     
